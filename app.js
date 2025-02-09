@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import os from "os";
 import Session from "./model.js"; // Importar el modelo de la sesión
 import './index.js'; // Asegurarnos de que index.js (conexión) se ejecute antes
-
+//practica hasta el punto 9 inserta y actualiz tambien hace lo de status 
 
 const app = express();
 const PORT = 3000;
