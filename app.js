@@ -20,10 +20,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
     session({
-        secret: " P4-UMBpalabrapilin",//firma la cookie de la sesion (esto asegura que las cookies no pueden ser modificada por 3eros)
-        resave:false,//evita que las sesiones se guarden nuevamente en el almacenamiento
-        saveUninitialized: false,// evita que se creen sesiones vacías (no inicializadas) en el almacenamiento.
-        cookie:{maxAge: 5*68*1000},//duracion de la cookie 
+        secret: " P4-UMBpalabrapilin",
+        resave:false,
+        saveUninitialized: false,
+        cookie:{maxAge: 5*68*1000},
 
     })
 );
