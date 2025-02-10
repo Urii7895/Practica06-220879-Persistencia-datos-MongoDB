@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import os from "os";
 import Session from "./model.js"; // Importar el modelo de la sesión
 import './index.js'; // Asegurarnos de que index.js (conexión) se ejecute antes
-//practica hasta el punto 9 inserta y actualiz tambien hace lo de status 
+
 
 const app = express();
 const PORT = 3000;
@@ -108,40 +108,39 @@ app.post("/login", async (req, res) => {
   }
 });
 
-
 app.post("/logout", async (req, res) => {
   const { sessionId } = req.body;
 
   if (!sessionId) {
-    return res.status(400).json({ message: "El ID de sesión es obligatorio." });
+      return res.status(400).json({ message: "El ID de sesión es obligatorio." });
   }
 
   try {
-    // Buscar la sesión en la base de datos usando findOne()
-    const session = await Session.findOne({ sessionId });
+      // Buscar la sesión en la base de datos usando findOne()
+      const session = await Session.findOne({ sessionId });
 
-    if (!session) {
-      return res.status(404).json({ message: "No se ha encontrado una sesión activa." });
-    }
-
-    // Actualizar el estado de la sesión a "Finalizada por el Usuario" y la fecha de último acceso
-    session.status = "Finalizada por el Usuario";
-    session.lastAccessedAt = new Date(); // Actualizar la fecha y hora de último acceso
-
-    // Guardar los cambios en la base de datos
-    await session.save();
-
-    // Si hay una sesión activa en el servidor, destruirla
-    req.session?.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ message: "Error al cerrar la sesión en el servidor." });
+      if (!session) {
+          return res.status(404).json({ message: "No se ha encontrado una sesión activa." });
       }
-    });
 
-    res.status(200).json({ message: "Logout exitoso." });
+      // Actualizar el estado de la sesión a "Finalizada por el Usuario" y la fecha de último acceso
+      session.status = "Finalizada por el usuario";
+      session.lastAccessedAt = new Date();
+
+      // Guardar los cambios en la base de datos
+      await session.save();
+
+      // Si hay una sesión activa en el servidor, destruirla
+      req.session?.destroy((err) => {
+          if (err) {
+              return res.status(500).json({ message: "Error al cerrar la sesión en el servidor." });
+          }
+      });
+
+      res.status(200).json({ message: "Logout exitoso." });
   } catch (error) {
-    console.error("Error al cerrar la sesión:", error);
-    res.status(500).json({ message: "Error al actualizar la sesión en la base de datos." });
+      console.error("Error al cerrar la sesión:", error);
+      res.status(500).json({ message: "Error al actualizar la sesión en la base de datos." });
   }
 });
 
@@ -235,6 +234,42 @@ app.get("/allSessions", async (req, res) => {
     res.status(500).json({ message: "Error al recuperar las sesiones." });
   }
 });
+
+
+
+const getAllCurrentSessions = async () => {
+  return await Session.find({ status: "Activa" });
+};
+
+app.get("/AllCurrentSessions", async (req, res) => {
+  try {
+      const activeSessions = await getAllCurrentSessions();
+      res.status(200).json({ message: "Sesiones activas recuperadas.", sessions: activeSessions });
+  } catch (error) {
+      res.status(500).json({ message: "Error al recuperar sesiones activas." });
+  }
+});
+
+
+app.delete("/deleteSessions" , async (req,res)=>{
+  try {
+    await Session.deleteMany({});
+    res.status(200).json({
+      message: "todas las sessiones han sido borrradas compache"
+    })
+  } catch (error) {
+    console.log("erroe el borrar todas compache")
+    res.status(500).json ({
+      message:("error al eliminar las sessiones compa ya te dije")
+    })
+    
+  }
+})
+
+
+
+
+
 
 
 
